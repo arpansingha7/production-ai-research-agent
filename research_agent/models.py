@@ -36,6 +36,11 @@ class ToolCall(BaseModel):
             data["arguments"] = args
         return data
 
+class WebpageSummary(BaseModel):
+    title: str = Field(description="The cleaned, accurate title of the article or webpage.")
+    key_points: List[str] = Field(description="Bullet points containing dense facts, metrics, and comparisons relevant to the research query.")
+    relevance_rating: int = Field(description="Rating from 1 to 10 of how useful this page is for answering the user's query.")
+
 class ToolResult(BaseModel):
     tool_name: str = Field(description="Name of the tool that was executed.")
     success: bool = Field(description="Whether the tool execution succeeded without critical errors.")

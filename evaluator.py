@@ -14,7 +14,7 @@ from research_agent.config import settings
 
 def run_evaluations():
     print("=" * 80)
-    print("                AuraResearchAgent - AUTOMATED EVALUATION SUITE               ")
+    print("                  ResearchAgent - AUTOMATED EVALUATION SUITE                 ")
     print("=" * 80)
     
     # Use the default provider from settings
@@ -111,18 +111,18 @@ def run_evaluations():
         time.sleep(2)
 
     # Compile Evaluation Report markdown file
-    generate_markdown_report(results)
+    generate_markdown_report(results, provider)
     
     print("\n" + "=" * 80)
     print("Evaluation completed successfully! Results exported to: evaluation_report.md")
     print("=" * 80)
 
-def generate_markdown_report(results):
+def generate_markdown_report(results, provider):
     report_file = os.path.join(settings.BASE_DIR, "evaluation_report.md")
     
     with open(report_file, "w", encoding="utf-8") as f:
-        f.write("# AuraResearchAgent - Evaluation & Benchmarking Report\n\n")
-        f.write("This document details the evaluation results of AuraResearchAgent against 5 standard benchmark queries including happy paths and edge cases.\n\n")
+        f.write("# ResearchAgent - Evaluation & Benchmarking Report\n\n")
+        f.write("This document details the evaluation results of ResearchAgent against 5 standard benchmark queries including happy paths and edge cases.\n\n")
         
         f.write("## Executive Summary Metrics\n\n")
         

@@ -19,7 +19,7 @@ from research_agent.config import settings
 # Streamlit Styling (Premium Aesthetics & Modern UI)
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="AuraResearch - Production AI Research Agent",
+    page_title="ResearchAgent - Production AI Research Agent",
     page_icon="🔍",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -461,7 +461,7 @@ class StreamlitLogHandler(logging.Handler):
                     <span class="terminal-btn minimize"></span>
                     <span class="terminal-btn expand"></span>
                 </div>
-                <div class="terminal-title">aura-research-agent -- react-executor</div>
+                <div class="terminal-title">research-agent -- react-executor</div>
                 <div class="terminal-status"><span class="status-dot pulsing"></span>RUNNING</div>
             </div>
             <div class="console-box">{colored_logs}</div>
@@ -475,7 +475,7 @@ class StreamlitLogHandler(logging.Handler):
 st.markdown("""
 <div class="title-container">
     <div class="pulse-badge">🚀 DEEP COGNITIVE INTELLIGENCE</div>
-    <div class="title-gradient">AuraResearch Agent</div>
+    <div class="title-gradient">Research Agent</div>
     <div class="subtitle">A production-grade Planner-Executor ReAct Agent synthesizing hyper-grounded research reports with full source lineage.</div>
 </div>
 """, unsafe_allow_html=True)
@@ -531,7 +531,7 @@ if run_btn:
                     <span class="terminal-btn minimize"></span>
                     <span class="terminal-btn expand"></span>
                 </div>
-                <div class="terminal-title">aura-research-agent -- react-executor</div>
+                <div class="terminal-title">research-agent -- react-executor</div>
                 <div class="terminal-status"><span class="status-dot pulsing"></span>STARTING</div>
             </div>
             <div class="console-box">Initializing execution trace...</div>
@@ -724,7 +724,7 @@ if st.session_state.research_results:
                         <span class="terminal-btn minimize"></span>
                         <span class="terminal-btn expand"></span>
                     </div>
-                    <div class="terminal-title">aura-research-agent -- react-executor</div>
+                    <div class="terminal-title">research-agent -- react-executor</div>
                     <div class="terminal-status" style="color: #60A5FA; background: rgba(96, 165, 250, 0.15);"><span class="status-dot" style="background-color: #60A5FA;"></span>FINISHED</div>
                 </div>
                 <div class="console-box">{colored_logs}</div>

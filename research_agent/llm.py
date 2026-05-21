@@ -100,9 +100,13 @@ class UnifiedLLMClient:
         
         # Supplement prompt with clear schema formatting guidelines to ensure compliant output
         system_instructions = (
-            "You are a precise JSON generator. You must respond with a valid JSON object matching this schema. "
-            "Do not include any extra text, markdown wrappers (other than json), explanations, or notes.\n"
-            f"Schema structure requirements: {schema.model_json_schema()}"
+            "You are a precise JSON generator. Your task is to populate the fields of the following JSON schema with actual data, findings, and content based on the user prompt.\n"
+            "CRITICAL RULES:\n"
+            "1. You MUST generate a direct JSON object containing the populated fields of the schema. Do NOT wrap it in a list or array.\n"
+            "2. DO NOT output the schema structure itself (e.g., do NOT include 'properties', 'type', 'description', or '$defs' in your output keys).\n"
+            "3. Every key in your JSON object must be a field from the schema. Fill the values with your actual responses and findings.\n"
+            "4. Return ONLY the valid JSON object, without any introductory or concluding text.\n\n"
+            f"Target Schema structure:\n{schema.model_json_schema()}"
         )
         
         response = self.groq_client.chat.completions.create(

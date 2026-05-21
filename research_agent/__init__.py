@@ -1,5 +1,5 @@
 """
-AuraResearchAgent - A production-oriented AI research agent.
+ResearchAgent - A production-oriented AI research agent.
 """
 
 from research_agent.config import settings

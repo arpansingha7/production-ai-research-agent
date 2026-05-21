@@ -1,6 +1,6 @@
-# AuraResearchAgent: Production-Oriented AI Research Agent
+# ResearchAgent: Production-Oriented AI Research Agent
 
-AuraResearchAgent is a production-grade, highly resilient agentic AI system designed to answer complex, multi-step research questions. Built with a custom **Planner-Executor (ReAct) architecture**, the system utilizes web search and content scraping tools to gather facts, handles real-world API rate limits and structural failures with self-healing fallbacks, and synthesizes structured, source-grounded research reports.
+ResearchAgent is a production-grade, highly resilient agentic AI system designed to answer complex, multi-step research questions. Built with a custom **Planner-Executor (ReAct) architecture**, the system utilizes web search and content scraping tools to gather facts, handles real-world API rate limits and structural failures with self-healing fallbacks, and synthesizes structured, source-grounded research reports.
 
 ---
 
@@ -54,7 +54,7 @@ python run_tests.py
 
 ## 🏛️ System Architecture
 
-AuraResearchAgent is designed with a highly modular, decoupled structure to ensure reliability, visibility, and testability.
+ResearchAgent is designed with a highly modular, decoupled structure to ensure reliability, visibility, and testability.
 
 ```
 AI Startup Intern Assignment/

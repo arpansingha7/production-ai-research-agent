@@ -1,16 +1,16 @@
-# AuraResearchAgent - Evaluation & Benchmarking Report
+# ResearchAgent - Evaluation & Benchmarking Report
 
-This document details the evaluation results of AuraResearchAgent against 5 standard benchmark queries including happy paths and edge cases.
+This document details the evaluation results of ResearchAgent against 5 standard benchmark queries including happy paths and edge cases.
 
 ## Executive Summary Metrics
 
 | Metric | Benchmark Result |
 | :--- | :--- |
-| **Active LLM Orchestrator** | `Llama 3.3 70B (Groq)` |
+| **Active LLM Orchestrator** | `gemini-2.0-flash (GEMINI)` |
 | **Search Core Engine** | `DuckDuckGo Search` |
 | **Total Queries Executed** | 5 |
 | **Successful Synthesized Reports** | 5 / 5 (100.0%) |
-| **Average Execution Latency** | 32.94 seconds |
+| **Average Execution Latency** | 149.16 seconds |
 | **Validation Compliance Rate** | 100% Pydantic Schema Compliant |
 
 ## Detailed Query Benchmarks
@@ -19,13 +19,13 @@ This document details the evaluation results of AuraResearchAgent against 5 stan
 **Question:** `Compare the top 3 open-source vector databases for a startup building RAG products.`
 
 - **Status:** `SUCCESS` ✅
-- **Execution Time:** `30.66 seconds`
-- **Confidence Level:** `Medium`
-- **Key Findings Cataloged:** `5 points`
+- **Execution Time:** `160.79 seconds`
+- **Confidence Level:** `High`
+- **Key Findings Cataloged:** `14 points`
 - **Sources Discovered & Verified:** `2 web sources`
 
 #### Executive Summary Snippet
-> The top 3 open-source vector databases for a startup building RAG products are Qdrant, Weaviate, and Pinecone. Qdrant is a high-performance vector database that has raised $28 million in funding and is designed to handle complex high-dimensional data [1]. Weaviate is a cloud-native vector database that provides a scalable and secure solution for RAG applications. Pinecone is a managed vector datab
+> This research report compares the top 3 open-source vector databases suitable for a startup building Recommender-Aided Graphics (RAG) products. The report identifies the key features, capabilities, and limitations of each database, as well as their performance, scalability, and compatibility with RAG products. The findings suggest that Qdrant is a highly flexible option for vector search, while An
 
 ---
 
@@ -33,13 +33,13 @@ This document details the evaluation results of AuraResearchAgent against 5 stan
 **Question:** `Find 5 Indian B2B SaaS startups in HR tech and summarize their positioning.`
 
 - **Status:** `SUCCESS` ✅
-- **Execution Time:** `23.71 seconds`
-- **Confidence Level:** `Medium`
-- **Key Findings Cataloged:** `5 points`
-- **Sources Discovered & Verified:** `5 web sources`
+- **Execution Time:** `129.45 seconds`
+- **Confidence Level:** `High`
+- **Key Findings Cataloged:** `9 points`
+- **Sources Discovered & Verified:** `9 web sources`
 
 #### Executive Summary Snippet
-> The Indian B2B SaaS market, particularly in the HR tech space, has witnessed significant growth in recent times. This report identifies and summarizes the positioning of 5 Indian B2B SaaS startups in HR tech, including Darwinbox, Vantage Circle, Zimyo, Kwench, and Advantage Club. These startups offer a range of products and services, including HR management systems, employee engagement platforms, 
+> This research report identifies 5 Indian B2B SaaS startups in the HR tech space and summarizes their positioning. The report highlights the unique value propositions, target audiences, and competitive landscapes of each startup. The findings provide insights into the Indian HR tech market and the key players in the space.
 
 ---
 
@@ -47,13 +47,13 @@ This document details the evaluation results of AuraResearchAgent against 5 stan
 **Question:** `Research the pros and cons of using a multi-agent architecture for customer support automation.`
 
 - **Status:** `SUCCESS` ✅
-- **Execution Time:** `30.03 seconds`
-- **Confidence Level:** `Medium`
-- **Key Findings Cataloged:** `3 points`
-- **Sources Discovered & Verified:** `1 web sources`
+- **Execution Time:** `164.80 seconds`
+- **Confidence Level:** `High`
+- **Key Findings Cataloged:** `17 points`
+- **Sources Discovered & Verified:** `3 web sources`
 
 #### Executive Summary Snippet
-> This report investigates the advantages and disadvantages of utilizing a multi-agent architecture for automating customer support. The research reveals that multi-agent systems can improve customer satisfaction and support resolution rates, but also pose challenges in terms of scalability and maintainability. A thorough evaluation of the costs and benefits of implementing a multi-agent architectur
+> This research report provides an in-depth analysis of the advantages and disadvantages of implementing a multi-agent architecture for customer support automation. The study highlights the benefits of improved customer satisfaction, increased efficiency, and reduced costs, but also notes the challenges of coordination and communication between agents, potential biases, and security risks. The repor
 
 ---
 
@@ -61,13 +61,13 @@ This document details the evaluation results of AuraResearchAgent against 5 stan
 **Question:** `Compare different approaches to adding memory in an AI support agent.`
 
 - **Status:** `SUCCESS` ✅
-- **Execution Time:** `52.03 seconds`
-- **Confidence Level:** `Medium`
-- **Key Findings Cataloged:** `7 points`
-- **Sources Discovered & Verified:** `1 web sources`
+- **Execution Time:** `195.72 seconds`
+- **Confidence Level:** `High`
+- **Key Findings Cataloged:** `8 points`
+- **Sources Discovered & Verified:** `2 web sources`
 
 #### Executive Summary Snippet
-> This report provides an overview of different approaches to adding memory in an AI support agent, focusing on their effectiveness, efficiency, and scalability. The main approaches include sensory memory, short-term memory, and long-term memory. Each approach has its strengths and weaknesses, and the choice of approach depends on the specific application and requirements. The report also discusses 
+> This research report compares various approaches to adding memory in AI support agents, focusing on their effectiveness, efficiency, and scalability. The study involves a comprehensive review of existing literature, experimentation with different memory architectures, and evaluation of their performance. The results show that graph-based memory architectures are effective but have scalability limi
 
 ---
 
@@ -75,18 +75,18 @@ This document details the evaluation results of AuraResearchAgent against 5 stan
 **Question:** `Research recent developments in a made-up company XYZCorp founded in 2026.`
 
 - **Status:** `SUCCESS` ✅
-- **Execution Time:** `28.29 seconds`
-- **Confidence Level:** `Low`
-- **Key Findings Cataloged:** `5 points`
-- **Sources Discovered & Verified:** `5 web sources`
+- **Execution Time:** `95.01 seconds`
+- **Confidence Level:** `Medium`
+- **Key Findings Cataloged:** `4 points`
+- **Sources Discovered & Verified:** `4 web sources`
 
 #### Executive Summary Snippet
-> This report provides an overview of XYZCorp, a company founded in 2026. Due to the company's fictional nature, limited information is available. However, based on the research plan and available data, this report summarizes the findings and provides insights into the company's current status. The report highlights the challenges of researching a non-existent company and the limitations of the avai
+> This research report provides an in-depth analysis of recent developments in XYZCorp, a fictional company founded in 2026. Our findings reveal a company with significant growth potential, driven by innovative products and services. However, we also identify major challenges facing the company, including intense competition and regulatory hurdles. Our report provides a comprehensive understanding o
 
 #### Edge-Case Evaluation Notes
 This query tested how the agent handles fake or non-existent companies. The agent correctly retrieved no real search records and reported:
-- *Confidence Reasoning:* `The confidence level is low due to the lack of available information about XYZCorp. The company is fictional, and no publicly available data is available to support the research findings.`
-- *Limitations Enforced:* `['The research is limited by the lack of available information about XYZCorp.', "The company's fictional nature makes it challenging to gather accurate and reliable data.", 'The research assumes that the company does not exist and that no information is available.']`
+- *Confidence Reasoning:* `Our confidence level is medium due to the availability of reliable sources and the comprehensiveness of our analysis. However, we also identify major limitations and assumptions in our research, including the reliance on secondary sources and the potential for biases in the data.`
+- *Limitations Enforced:* `['Our research is limited by the availability of reliable sources and the comprehensiveness of our analysis.', 'We rely heavily on secondary sources, which may introduce biases and inaccuracies in our findings.', "Our analysis is based on a snapshot of XYZCorp's recent developments and may not reflect the company's current situation."]`
 
 ---
 

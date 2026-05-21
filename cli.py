@@ -8,7 +8,7 @@ load_dotenv()
 from research_agent.orchestrator import ResearchOrchestrator
 
 def main():
-    parser = argparse.ArgumentParser(description="AuraResearchAgent: Production-Oriented AI Research Agent")
+    parser = argparse.ArgumentParser(description="ResearchAgent: Production-Oriented AI Research Agent")
     parser.add_argument("question", type=str, help="Research question or topic to investigate")
     parser.add_argument("--provider", type=str, choices=["gemini", "groq"], default=None,
                         help="LLM Provider to use (defaults to setting in .env)")
@@ -16,7 +16,7 @@ def main():
     args = parser.parse_args()
     
     print("=" * 80)
-    print("           AuraResearchAgent - PRODUCTION-ORIENTED AI RESEARCH AGENT          ")
+    print("             ResearchAgent - PRODUCTION-ORIENTED AI RESEARCH AGENT            ")
     print("=" * 80)
     
     orchestrator = ResearchOrchestrator(provider=args.provider)
