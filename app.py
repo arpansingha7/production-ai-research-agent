@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import logging
+import re
 import streamlit as st
 from dotenv import load_dotenv
 
@@ -41,63 +42,116 @@ st.markdown("""
     
     /* Modern Glassmorphic Dashboard Containers */
     .dashboard-card {
-        background: rgba(22, 27, 34, 0.7);
-        border: 1px solid rgba(48, 54, 61, 0.8);
+        background: rgba(13, 17, 23, 0.7);
+        border: 1px solid rgba(48, 54, 61, 0.6);
         border-radius: 12px;
         padding: 20px;
         margin-bottom: 20px;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        transition: border-color 0.3s ease;
+    }
+    .dashboard-card:hover {
+        border-color: rgba(56, 189, 248, 0.4);
+    }
+    
+    /* Sidebar custom styling */
+    [data-testid="stSidebar"] {
+        background-color: #0b0e14 !important;
+        border-right: 1px solid #1f2937 !important;
+    }
+    
+    /* Premium button styles */
+    div.stButton > button {
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 10px 24px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important;
+        width: 100%;
+        margin-top: 10px;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5) !important;
+        filter: brightness(1.1) !important;
+    }
+    div.stButton > button:active {
+        transform: translateY(1px) !important;
+    }
+    
+    /* Input field overrides for modern styling */
+    .stTextArea textarea, .stTextInput input, .stSelectbox select {
+        background: rgba(17, 24, 39, 0.8) !important;
+        border: 1px solid rgba(75, 85, 99, 0.4) !important;
+        border-radius: 8px !important;
+        color: #F8FAFC !important;
+        transition: all 0.3s ease !important;
+    }
+    .stTextArea textarea:focus, .stTextInput input:focus {
+        border-color: #60A5FA !important;
+        box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25) !important;
     }
     
     /* Gaps & alignment */
     .title-gradient {
-        background: linear-gradient(135deg, #60A5FA 0%, #8B5CF6 50%, #EC4899 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 2.8rem;
+        font-size: 3.2rem;
         font-weight: 800;
         margin-bottom: 5px;
+        letter-spacing: -0.025em;
     }
     
     /* Realtime scrollable logger console */
     .console-box {
-        background-color: #0A0D14;
-        color: #38BDF8;
-        font-family: 'Courier New', Courier, monospace;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #1E293B;
-        height: 250px;
+        background-color: #07090e;
+        color: #34d399;
+        font-family: 'Space Mono', 'Courier New', Courier, monospace;
+        padding: 18px;
+        border-radius: 10px;
+        border: 1px solid #111827;
+        height: 280px;
         overflow-y: scroll;
         white-space: pre-wrap;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         margin-top: 10px;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
     }
     
     /* Custom metric card tags */
-    .metric-container {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
     .metric-card {
-        flex: 1;
-        background: rgba(30, 41, 59, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        padding: 15px;
+        background: linear-gradient(135deg, rgba(13, 17, 23, 0.85) 0%, rgba(20, 24, 33, 0.6) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.15);
+        border-radius: 12px;
+        padding: 20px;
         text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    }
+    .metric-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(56, 189, 248, 0.45);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.25);
     }
     .metric-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #F8FAFC;
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     .metric-label {
         font-size: 0.8rem;
-        color: #94A3B8;
+        color: #94a3b8;
         text-transform: uppercase;
-        margin-top: 5px;
+        margin-top: 6px;
+        letter-spacing: 0.05em;
+        font-weight: 500;
     }
     
     /* Highlighting citations */
