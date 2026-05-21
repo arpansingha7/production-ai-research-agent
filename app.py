@@ -29,136 +29,357 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* Google Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
     
     /* Global style overrides */
     html, body, [class*="css"] {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #030712 !important;
+        color: #f3f4f6 !important;
     }
-    h1, h2, h3, h4 {
+    h1, h2, h3, h4, h5, h6 {
         font-family: 'Space Grotesk', sans-serif;
-        font-weight: 600;
+        font-weight: 700;
+        color: #ffffff;
     }
     
     /* Modern Glassmorphic Dashboard Containers */
     .dashboard-card {
-        background: rgba(13, 17, 23, 0.7);
-        border: 1px solid rgba(48, 54, 61, 0.6);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        transition: border-color 0.3s ease;
+        background: rgba(15, 23, 42, 0.65) !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 16px !important;
+        padding: 24px !important;
+        margin-bottom: 20px !important;
+        backdrop-filter: blur(16px) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative;
+        overflow: hidden;
     }
     .dashboard-card:hover {
-        border-color: rgba(56, 189, 248, 0.4);
+        border-color: rgba(56, 189, 248, 0.3) !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 25px rgba(56, 189, 248, 0.08) !important;
+        transform: translateY(-2px);
     }
     
     /* Sidebar custom styling */
     [data-testid="stSidebar"] {
-        background-color: #0b0e14 !important;
-        border-right: 1px solid #1f2937 !important;
+        background: linear-gradient(180deg, #090d16 0%, #05070c 100%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    [data-testid="stSidebar"] h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #38bdf8 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     
     /* Premium button styles */
     div.stButton > button {
-        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%) !important;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%) !important;
         color: white !important;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 10px 24px !important;
-        font-weight: 600 !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 12px 28px !important;
+        font-weight: 700 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        letter-spacing: 0.03em !important;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3) !important;
         width: 100%;
         margin-top: 10px;
     }
     div.stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5) !important;
-        filter: brightness(1.1) !important;
+        transform: translateY(-3px) scale(1.02) !important;
+        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.5) !important;
+        filter: brightness(1.15) !important;
     }
     div.stButton > button:active {
-        transform: translateY(1px) !important;
+        transform: translateY(-1px) scale(0.99) !important;
     }
     
-    /* Input field overrides for modern styling */
-    .stTextArea textarea, .stTextInput input, .stSelectbox select {
-        background: rgba(17, 24, 39, 0.8) !important;
-        border: 1px solid rgba(75, 85, 99, 0.4) !important;
-        border-radius: 8px !important;
-        color: #F8FAFC !important;
-        transition: all 0.3s ease !important;
+    /* Target secondary button specifically */
+    div.stButton button[kind="secondary"] {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #f8fafc !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: none !important;
     }
-    .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #60A5FA !important;
-        box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25) !important;
+    div.stButton button[kind="secondary"]:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
     }
     
-    /* Gaps & alignment */
+    /* Premium input field overrides */
+    .stTextArea textarea, .stTextInput input, .stSelectbox [data-baseweb="select"] {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        color: #f8fafc !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        padding: 12px 16px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .stTextArea textarea:focus, .stTextInput input:focus, .stSelectbox [data-baseweb="select"]:focus {
+        border-color: #38bdf8 !important;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.15) !important;
+    }
+    
+    /* Header layout */
+    .title-container {
+        text-align: center;
+        padding: 35px 0 25px 0;
+        position: relative;
+    }
     .title-gradient {
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+        font-family: 'Space Grotesk', sans-serif;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 40%, #ec4899 70%, #10b981 100%);
+        background-size: 300% 300%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 3.2rem;
+        font-size: 3.8rem;
         font-weight: 800;
-        margin-bottom: 5px;
-        letter-spacing: -0.025em;
+        letter-spacing: -0.03em;
+        margin-bottom: 12px;
+        animation: gradientShift 8s infinite alternate ease-in-out;
+    }
+    .subtitle {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.15rem;
+        color: #94a3b8;
+        font-weight: 400;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    .pulse-badge {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.3);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #c084fc;
+        margin-bottom: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 0.05em;
+    }
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
     
-    /* Realtime scrollable logger console */
-    .console-box {
-        background-color: #07090e;
-        color: #34d399;
-        font-family: 'Space Mono', 'Courier New', Courier, monospace;
-        padding: 18px;
-        border-radius: 10px;
-        border: 1px solid #111827;
-        height: 280px;
-        overflow-y: scroll;
-        white-space: pre-wrap;
-        font-size: 0.85rem;
-        margin-top: 10px;
-        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
-    }
-    
-    /* Custom metric card tags */
-    .metric-card {
-        background: linear-gradient(135deg, rgba(13, 17, 23, 0.85) 0%, rgba(20, 24, 33, 0.6) 100%);
-        border: 1px solid rgba(56, 189, 248, 0.15);
+    /* macOS retro-futuristic developer terminal */
+    .terminal-window {
+        background: #080c14;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(124, 58, 237, 0.15);
+        overflow: hidden;
+        margin-top: 15px;
+        margin-bottom: 25px;
+    }
+    .terminal-header {
+        background: #0f172a;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+    }
+    .terminal-buttons {
+        display: flex;
+        gap: 8px;
+    }
+    .terminal-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .terminal-btn.close { background-color: #ff5f56; }
+    .terminal-btn.minimize { background-color: #ffbd2e; }
+    .terminal-btn.expand { background-color: #27c93f; }
+    
+    .terminal-title {
+        color: #94a3b8;
+        font-size: 0.8rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 500;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .terminal-status {
+        margin-left: auto;
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        background-color: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .pulsing {
+        animation: statusPulse 1.5s infinite ease-in-out;
+    }
+    @keyframes statusPulse {
+        0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { transform: scale(1.2); opacity: 0.5; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    
+    .console-box {
+        background-color: #04060a;
+        color: #e2e8f0;
+        font-family: 'JetBrains Mono', 'Space Mono', monospace;
         padding: 20px;
+        height: 380px;
+        overflow-y: auto;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin: 0;
+        border: none;
+        box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.8);
+    }
+    .console-box::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .console-box::-webkit-scrollbar-track {
+        background: #04060a;
+    }
+    .console-box::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+    }
+    .console-box::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+    }
+    
+    /* Interactive metrics card grid */
+    .metric-card {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.5) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
         text-align: center;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent 60%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
     }
     .metric-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(56, 189, 248, 0.45);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+        transform: translateY(-6px);
+        border-color: rgba(56, 189, 248, 0.4);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+    .metric-card:hover::before {
+        opacity: 1;
+    }
+    .metric-icon {
+        font-size: 2.2rem;
+        margin-bottom: 12px;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        transition: transform 0.3s ease;
+    }
+    .metric-card:hover .metric-icon {
+        transform: scale(1.15) rotate(5deg);
     }
     .metric-value {
-        font-size: 1.8rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2.2rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        line-height: 1.1;
+        margin-bottom: 8px;
+    }
+    /* Set custom colors for each column metric card card */
+    .metric-card:nth-child(2) .metric-value {
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    .metric-card:nth-child(3) .metric-value {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    .metric-card:nth-child(4) .metric-value {
+        background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
     }
     .metric-label {
-        font-size: 0.8rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.75rem;
         color: #94a3b8;
         text-transform: uppercase;
-        margin-top: 6px;
-        letter-spacing: 0.05em;
-        font-weight: 500;
+        letter-spacing: 0.1em;
+        font-weight: 600;
     }
     
-    /* Highlighting citations */
-    .citation-tag {
-        color: #38BDF8;
-        font-weight: 600;
-        cursor: pointer;
+    /* Glassmorphic Capsule Tabs styling */
+    div[data-baseweb="tab-list"] {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        padding: 8px !important;
+        border-radius: 16px !important;
+        gap: 10px !important;
+        margin-bottom: 30px !important;
+        backdrop-filter: blur(16px) !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+    }
+    button[data-baseweb="tab"] {
+        background: transparent !important;
+        color: #94a3b8 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        padding: 10px 22px !important;
+        border-radius: 12px !important;
+        border: 1px solid transparent !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    button[data-baseweb="tab"]:hover {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%) !important;
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.1) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -221,13 +442,43 @@ class StreamlitLogHandler(logging.Handler):
         self.log_data.append(log_entry)
         full_logs = "\n".join(self.log_data)
         st.session_state.trace_logs = full_logs
-        self.placeholder.markdown(f'<div class="console-box">{full_logs}</div>', unsafe_allow_html=True)
+        
+        # Color coding simple terms inside live terminal stream
+        colored_logs = full_logs
+        colored_logs = colored_logs.replace(" - INFO - ", " - <span style='color: #10B981;'>INFO</span> - ")
+        colored_logs = colored_logs.replace(" - WARNING - ", " - <span style='color: #F59E0B;'>WARNING</span> - ")
+        colored_logs = colored_logs.replace(" - ERROR - ", " - <span style='color: #EF4444;'>ERROR</span> - ")
+        colored_logs = colored_logs.replace("Running Web Search:", "<span style='color: #38BDF8;'>Running Web Search:</span>")
+        colored_logs = colored_logs.replace("Scraping page:", "<span style='color: #F472B6;'>Scraping page:</span>")
+        colored_logs = colored_logs.replace("Entering new ReAct Step", "<span style='color: #A78BFA; font-weight: bold;'>Entering new ReAct Step</span>")
+        colored_logs = colored_logs.replace("Executing ToolCall:", "<span style='color: #06B6D4;'>Executing ToolCall:</span>")
+        
+        terminal_html = f"""
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="terminal-btn close"></span>
+                    <span class="terminal-btn minimize"></span>
+                    <span class="terminal-btn expand"></span>
+                </div>
+                <div class="terminal-title">aura-research-agent -- react-executor</div>
+                <div class="terminal-status"><span class="status-dot pulsing"></span>RUNNING</div>
+            </div>
+            <div class="console-box">{colored_logs}</div>
+        </div>
+        """
+        self.placeholder.markdown(terminal_html, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # Main Page Layout
 # ---------------------------------------------------------
-st.markdown('<div class="title-gradient">AuraResearch Agent</div>', unsafe_allow_html=True)
-st.markdown("<p style='font-size: 1.1rem; color: #94A3B8; margin-top: -10px;'>Production-Oriented ReAct Agent for Deep Analytical Research</p>", unsafe_allow_html=True)
+st.markdown("""
+<div class="title-container">
+    <div class="pulse-badge">🚀 DEEP COGNITIVE INTELLIGENCE</div>
+    <div class="title-gradient">AuraResearch Agent</div>
+    <div class="subtitle">A production-grade Planner-Executor ReAct Agent synthesizing hyper-grounded research reports with full source lineage.</div>
+</div>
+""", unsafe_allow_html=True)
 
 # Example Queries dropdown
 example_selection = st.selectbox(
@@ -271,7 +522,22 @@ if run_btn:
         
         st.markdown("### 🔍 Live Orchestration Trace")
         console_placeholder = st.empty()
-        console_placeholder.markdown('<div class="console-box">Initializing execution trace...</div>', unsafe_allow_html=True)
+        
+        init_terminal = """
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="terminal-btn close"></span>
+                    <span class="terminal-btn minimize"></span>
+                    <span class="terminal-btn expand"></span>
+                </div>
+                <div class="terminal-title">aura-research-agent -- react-executor</div>
+                <div class="terminal-status"><span class="status-dot pulsing"></span>STARTING</div>
+            </div>
+            <div class="console-box">Initializing execution trace...</div>
+        </div>
+        """
+        console_placeholder.markdown(init_terminal, unsafe_allow_html=True)
         
         # Attach Streamlit logging handler
         handler = StreamlitLogHandler(console_placeholder)
@@ -318,23 +584,42 @@ if st.session_state.research_results:
     st.markdown("---")
     st.markdown("### 📊 Research Run Metadata")
     
-    # Estimate tokens / cost from session logger if available
-    tok_in = report.get("total_tokens_in", 0)
-    tok_out = report.get("total_tokens_out", 0)
-    cost = report.get("total_cost_usd", 0.0)
-    
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{st.session_state.elapsed_time:.2f}s</div><div class="metric-label">Execution Time</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">⚡</div>
+            <div class="metric-value">{st.session_state.elapsed_time:.2f}s</div>
+            <div class="metric-label">Execution Time</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col2:
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{report.get("confidence_level", "Medium")}</div><div class="metric-label">Confidence Score</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">🛡️</div>
+            <div class="metric-value">{report.get("confidence_level", "Medium")}</div>
+            <div class="metric-label">Confidence Score</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col3:
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{len(report.get("sources", []))}</div><div class="metric-label">Verified Sources</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">🔗</div>
+            <div class="metric-value">{len(report.get("sources", []))}</div>
+            <div class="metric-label">Verified Sources</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{provider.upper()}</div><div class="metric-label">Active Orchestrator</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">🤖</div>
+            <div class="metric-value">{provider.upper()}</div>
+            <div class="metric-label">Active Orchestrator</div>
+        </div>
+        """, unsafe_allow_html=True)
         
     # 2. Main structured report presentation in Tabs
-    st.markdown("### 📑 Synthesized Research Report")
+    st.markdown("<br>### 📑 Synthesized Research Report", unsafe_allow_html=True)
     
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "📝 Executive Summary",
@@ -371,22 +656,22 @@ if st.session_state.research_results:
                 score_color = "#10B981" if score >= 8 else "#F59E0B" if score >= 5 else "#EF4444"
                 
                 st.markdown(f"""
-                <div class="dashboard-card" style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                        <h4 style="margin: 0px; font-size: 1.1rem; color: #F8FAFC;">
+                <div class="dashboard-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 style="margin: 0px; font-size: 1.15rem; color: #ffffff;">
                             <span style="color: #38BDF8;">[{src.get("index")}]</span> {src.get("title")}
                         </h4>
-                        <span style="background-color: {score_color}; color: #FFFFFF; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 20px;">
+                        <span style="background: rgba({16 if score>=8 else 245 if score>=5 else 239}, {185 if score>=8 else 158 if score>=5 else 68}, {129 if score>=8 else 11 if score>=5 else 68}, 0.15); color: {score_color}; border: 1px solid rgba({16 if score>=8 else 245 if score>=5 else 239}, {185 if score>=8 else 158 if score>=5 else 68}, {129 if score>=8 else 11 if score>=5 else 68}, 0.3); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 50px; font-family: 'JetBrains Mono', monospace;">
                             CREDIBILITY: {score}/10
                         </span>
                     </div>
-                    <div style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 10px;">
-                        <strong>Direct URL:</strong> <a href="{src.get("url")}" target="_blank" style="color: #60A5FA;">{src.get("url")}</a>
+                    <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;">
+                        <strong>Direct URL:</strong> <a href="{src.get("url")}" target="_blank" style="color: #38bdf8; text-decoration: none; border-bottom: 1px dashed rgba(56, 189, 248, 0.4);">{src.get("url")}</a>
                     </div>
-                    <div style="font-size: 0.9rem; color: #E2E8F0; margin-bottom: 5px;">
+                    <div style="font-size: 0.95rem; color: #e2e8f0; margin-bottom: 10px; line-height: 1.5;">
                         <strong>Relevance:</strong> {src.get("relevance_reasoning")}
                     </div>
-                    <div style="font-size: 0.85rem; color: #64748B; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 5px; font-style: italic;">
+                    <div style="font-size: 0.85rem; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 8px; border-left: 3px solid #7c3aed; font-style: italic; line-height: 1.6;">
                         "{src.get("snippet")}"
                     </div>
                 </div>
@@ -422,6 +707,29 @@ if st.session_state.research_results:
         st.markdown("Review the exact sequential operations and tool queries performed by the ReAct Agent.")
         logs = st.session_state.trace_logs
         if logs:
-            st.markdown(f'<div class="console-box">{logs}</div>', unsafe_allow_html=True)
+            colored_logs = logs
+            colored_logs = colored_logs.replace(" - INFO - ", " - <span style='color: #10B981;'>INFO</span> - ")
+            colored_logs = colored_logs.replace(" - WARNING - ", " - <span style='color: #F59E0B;'>WARNING</span> - ")
+            colored_logs = colored_logs.replace(" - ERROR - ", " - <span style='color: #EF4444;'>ERROR</span> - ")
+            colored_logs = colored_logs.replace("Running Web Search:", "<span style='color: #38BDF8;'>Running Web Search:</span>")
+            colored_logs = colored_logs.replace("Scraping page:", "<span style='color: #F472B6;'>Scraping page:</span>")
+            colored_logs = colored_logs.replace("Entering new ReAct Step", "<span style='color: #A78BFA; font-weight: bold;'>Entering new ReAct Step</span>")
+            colored_logs = colored_logs.replace("Executing ToolCall:", "<span style='color: #06B6D4;'>Executing ToolCall:</span>")
+            
+            terminal_html = f"""
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn expand"></span>
+                    </div>
+                    <div class="terminal-title">aura-research-agent -- react-executor</div>
+                    <div class="terminal-status" style="color: #60A5FA; background: rgba(96, 165, 250, 0.15);"><span class="status-dot" style="background-color: #60A5FA;"></span>FINISHED</div>
+                </div>
+                <div class="console-box">{colored_logs}</div>
+            </div>
+            """
+            st.markdown(terminal_html, unsafe_allow_html=True)
         else:
             st.info("No execution trace logs found for this run.")
