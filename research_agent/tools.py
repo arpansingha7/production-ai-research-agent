@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import time
 import urllib.parse
 from typing import List, Dict, Any, Optional
 import requests
@@ -19,7 +20,6 @@ class WebSearchTool:
         Executes a Google/DuckDuckGo web search for a given query.
         Returns a formatted ToolResult containing search result summaries.
         """
-        import time
         attempts = 0
         ddg_results = []
         last_error = None
@@ -63,28 +63,28 @@ class WebSearchTool:
         # 2. Live search with multi-backend fallbacks
         while attempts < 3:
             try:
-                ddgs = DDGS()
-                # First try standard text search
-                ddg_results = list(ddgs.text(query, max_results=self.limit))
-                
-                # Fallback to lite backend if empty
-                if not ddg_results:
-                    time.sleep(1.0)
-                    ddg_results = list(ddgs.text(query, backend="lite", max_results=self.limit))
+                with DDGS() as ddgs:
+                    # First try standard text search
+                    ddg_results = list(ddgs.text(query, max_results=self.limit))
                     
-                # Fallback to html backend if empty
-                if not ddg_results:
-                    time.sleep(1.0)
-                    ddg_results = list(ddgs.text(query, backend="html", max_results=self.limit))
-                
-                # Fallback to news search if still empty
-                if not ddg_results:
-                    time.sleep(1.0)
-                    ddg_results = list(ddgs.news(query, max_results=self.limit))
-                    if ddg_results:
-                        for res in ddg_results:
-                            res["href"] = res.get("url", "")
-                            res["body"] = res.get("body", "")
+                    # Fallback to lite backend if empty
+                    if not ddg_results:
+                        time.sleep(1.0)
+                        ddg_results = list(ddgs.text(query, backend="lite", max_results=self.limit))
+                        
+                    # Fallback to html backend if empty
+                    if not ddg_results:
+                        time.sleep(1.0)
+                        ddg_results = list(ddgs.text(query, backend="html", max_results=self.limit))
+                    
+                    # Fallback to news search if still empty
+                    if not ddg_results:
+                        time.sleep(1.0)
+                        ddg_results = list(ddgs.news(query, max_results=self.limit))
+                        if ddg_results:
+                            for res in ddg_results:
+                                res["href"] = res.get("url", "")
+                                res["body"] = res.get("body", "")
                 
                 if ddg_results:
                     break
@@ -105,6 +105,28 @@ class WebSearchTool:
                 error=str(last_error) if last_error else "Empty Results"
             )
             
+        # Write back to search cache for high-availability efficiency
+        try:
+            cache = {}
+            if os.path.exists(cache_path):
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    cache = json.load(f)
+            
+            # Normalize and store
+            cache_items = []
+            for res in ddg_results:
+                cache_items.append({
+                    "title": res.get("title", "Untitled"),
+                    "href": res.get("href", ""),
+                    "body": res.get("body", "")
+                })
+            cache[query] = cache_items
+            
+            with open(cache_path, "w", encoding="utf-8") as f:
+                json.dump(cache, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+
         formatted_results = []
         for i, res in enumerate(ddg_results):
             title = res.get("title", "Untitled")
@@ -155,6 +177,22 @@ class WebScraperTool:
                 error="Invalid URL"
             )
 
+        # 1. High Availability Scrape Cache lookup
+        scrape_cache_path = os.path.join(settings.BASE_DIR, "scrape_cache.json")
+        if os.path.exists(scrape_cache_path):
+            try:
+                with open(scrape_cache_path, "r", encoding="utf-8") as f:
+                    scrape_cache = json.load(f)
+                if url in scrape_cache:
+                    return ToolResult(
+                        tool_name="fetch_webpage",
+                        success=True,
+                        content=scrape_cache[url]["content"],
+                        url=url
+                    )
+            except Exception:
+                pass
+
         # Rotate headers to reduce risk of cloudflare/scraping blocks
         headers = self.headers_list[0]
         
@@ -188,7 +226,6 @@ class WebScraperTool:
             # Context-budget management: restrict output to max 3000 words
             words = content_text.split()
             if len(words) > 3000:
-                self.logger_warning_triggered = True # Can trace truncation
                 content_text = " ".join(words[:3000]) + "\n\n[Content truncated by agent to stay within token budget...]"
             
             if not content_text:
@@ -196,6 +233,21 @@ class WebScraperTool:
                 raw_text = soup.get_text(separator=' ')
                 cleaned_raw = " ".join([w for w in raw_text.split() if len(w) < 40]) # Strip extremely long tokens
                 content_text = cleaned_raw[:6000]
+                
+            # Write to high-availability scrape cache
+            try:
+                scrape_cache = {}
+                if os.path.exists(scrape_cache_path):
+                    with open(scrape_cache_path, "r", encoding="utf-8") as f:
+                        scrape_cache = json.load(f)
+                scrape_cache[url] = {
+                    "content": content_text,
+                    "timestamp": time.time()
+                }
+                with open(scrape_cache_path, "w", encoding="utf-8") as f:
+                    json.dump(scrape_cache, f, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
                 
             return ToolResult(
                 tool_name="fetch_webpage",

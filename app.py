@@ -301,6 +301,8 @@ if run_btn:
             except Exception as e:
                 st.error(f"Critical execution error: {str(e)}")
             finally:
+                if 'orchestrator' in locals() and hasattr(orchestrator, 'logger'):
+                    orchestrator.logger.logger.removeHandler(handler)
                 agent_logger.removeHandler(handler)
                 
         # Rerun to cleanly update page display

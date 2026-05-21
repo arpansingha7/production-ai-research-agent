@@ -7,10 +7,9 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
 
-    # Providers & Models
     DEFAULT_LLM_PROVIDER: str = "gemini"
-    DEFAULT_GEMINI_MODEL: str = "gemini-2.5-flash"
-    DEFAULT_GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    DEFAULT_GEMINI_MODEL: str = "gemini-2.0-flash"
+    DEFAULT_GROQ_MODEL: str = "llama-3.1-8b-instant"
 
     # Orchestration configuration
     MAX_STEPS: int = 5

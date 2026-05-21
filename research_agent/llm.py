@@ -39,14 +39,36 @@ class UnifiedLLMClient:
             except Exception as e:
                 self.logger.log_error("Failed to initialize Groq Client", e)
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=8),
+        retry=retry_if_exception_type(Exception),
+        reraise=True
+    )
     def _call_gemini_structured(self, model: str, prompt: str, schema: Type[T]) -> tuple[str, int, int]:
         """Calls Gemini and returns (response_text, input_tokens, output_tokens)."""
         if not self.gemini_client:
             raise ValueError("Gemini API key is not configured or client failed to initialize.")
         
+        # Build clean schema dictionary without additionalProperties to satisfy Gemini API constraints
+        try:
+            raw_schema = schema.model_json_schema()
+            def clean_schema(s: Any) -> Any:
+                if isinstance(s, dict):
+                    s.pop("additionalProperties", None)
+                    # Resolve any other Gemini incompatibilities if needed
+                    for k, v in list(s.items()):
+                        s[k] = clean_schema(v)
+                elif isinstance(s, list):
+                    s = [clean_schema(x) for x in s]
+                return s
+            cleaned_schema = clean_schema(raw_schema)
+        except Exception:
+            cleaned_schema = schema
+        
         config = types.GenerateContentConfig(
             response_mime_type="application/json",
-            response_schema=schema,
+            response_schema=cleaned_schema,
             temperature=0.2
         )
         
@@ -65,6 +87,12 @@ class UnifiedLLMClient:
             
         return response.text, input_tokens, output_tokens
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=8),
+        retry=retry_if_exception_type(Exception),
+        reraise=True
+    )
     def _call_groq_structured(self, model: str, prompt: str, schema: Type[T]) -> tuple[str, int, int]:
         """Calls Groq with JSON mode and returns (response_text, input_tokens, output_tokens)."""
         if not self.groq_client:

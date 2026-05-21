@@ -1,5 +1,5 @@
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 class ResearchPlan(BaseModel):
     overview: str = Field(description="High-level summary of the research methodology and target insights.")
@@ -8,8 +8,33 @@ class ResearchPlan(BaseModel):
 
 class ToolCall(BaseModel):
     tool_name: str = Field(description="Name of the tool to invoke: 'search_web' or 'fetch_webpage' or 'synthesize'.")
-    arguments: Dict[str, Any] = Field(description="Arguments for the tool (e.g. {'query': '...'} or {'url': '...'}).")
     rationale: str = Field(description="Explanation of why this tool call is necessary at this step.")
+    query: Optional[str] = Field(default=None, description="The search query parameter. REQUIRED if tool_name is 'search_web'.")
+    url: Optional[str] = Field(default=None, description="The target URL parameter. REQUIRED if tool_name is 'fetch_webpage'.")
+    arguments: Dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool (e.g. {'query': '...'} or {'url': '...'}). Keep empty if tool_name is 'synthesize'.")
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_arguments(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            args = data.get("arguments") or {}
+            if not isinstance(args, dict):
+                args = {}
+            
+            # Map query
+            if "query" in args and not data.get("query"):
+                data["query"] = args["query"]
+            elif data.get("query") and "query" not in args:
+                args["query"] = data["query"]
+                
+            # Map url
+            if "url" in args and not data.get("url"):
+                data["url"] = args["url"]
+            elif data.get("url") and "url" not in args:
+                args["url"] = data["url"]
+                
+            data["arguments"] = args
+        return data
 
 class ToolResult(BaseModel):
     tool_name: str = Field(description="Name of the tool that was executed.")

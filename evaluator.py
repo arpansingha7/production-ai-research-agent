@@ -17,12 +17,15 @@ def run_evaluations():
     print("                AuraResearchAgent - AUTOMATED EVALUATION SUITE               ")
     print("=" * 80)
     
-    # We will use 'groq' as the default provider for evaluations as Llama 3.3 70B is highly available and fast
-    provider = "groq"
+    # Use the default provider from settings
+    provider = settings.DEFAULT_LLM_PROVIDER
     
     # Check key configuration
-    if not settings.GROQ_API_KEY:
+    if provider == "groq" and not settings.GROQ_API_KEY:
         print("[ERROR] GROQ_API_KEY not configured. Cannot run evaluation suite.", file=sys.stderr)
+        sys.exit(1)
+    elif provider == "gemini" and not settings.GEMINI_API_KEY:
+        print("[ERROR] GEMINI_API_KEY not configured. Cannot run evaluation suite.", file=sys.stderr)
         sys.exit(1)
 
     queries = [
@@ -130,7 +133,8 @@ def generate_markdown_report(results):
         
         f.write("| Metric | Benchmark Result |\n")
         f.write("| :--- | :--- |\n")
-        f.write(f"| **Active LLM Orchestrator** | `Llama 3.3 70B (Groq)` |\n")
+        model_name = settings.DEFAULT_GEMINI_MODEL if provider == "gemini" else settings.DEFAULT_GROQ_MODEL
+        f.write(f"| **Active LLM Orchestrator** | `{model_name} ({provider.upper()})` |\n")
         f.write(f"| **Search Core Engine** | `DuckDuckGo Search` |\n")
         f.write(f"| **Total Queries Executed** | {total_runs} |\n")
         f.write(f"| **Successful Synthesized Reports** | {successful_runs} / {total_runs} ({success_rate:.1f}%) |\n")
