@@ -7,6 +7,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 from google import genai
 from google.genai import types
 from google.genai.errors import APIError as GeminiAPIError
+import groq as groq_module
 from groq import Groq
 from groq import APIError as GroqAPIError
 
@@ -30,18 +31,22 @@ class UnifiedLLMClient:
             except Exception as e:
                 self.logger.log_error("Failed to initialize Gemini Client", e)
 
-        # Initialize Groq Client
+        # Initialize Groq Client with a sensible HTTP timeout to prevent hangs
         self.groq_key = settings.GROQ_API_KEY
         self.groq_client = None
         if self.groq_key:
             try:
-                self.groq_client = Groq(api_key=self.groq_key)
+                import httpx
+                self.groq_client = Groq(
+                    api_key=self.groq_key,
+                    http_client=httpx.Client(timeout=httpx.Timeout(30.0, connect=5.0))
+                )
             except Exception as e:
                 self.logger.log_error("Failed to initialize Groq Client", e)
 
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=2, max=8),
+        stop=stop_after_attempt(2),           # was 3 — fail faster
+        wait=wait_exponential(multiplier=1, min=1, max=4),  # was min=2, max=8
         retry=retry_if_exception_type(Exception),
         reraise=True
     )
@@ -56,7 +61,6 @@ class UnifiedLLMClient:
             def clean_schema(s: Any) -> Any:
                 if isinstance(s, dict):
                     s.pop("additionalProperties", None)
-                    # Resolve any other Gemini incompatibilities if needed
                     for k, v in list(s.items()):
                         s[k] = clean_schema(v)
                 elif isinstance(s, list):
@@ -78,7 +82,6 @@ class UnifiedLLMClient:
             config=config
         )
         
-        # Extract token usage if available
         input_tokens = 0
         output_tokens = 0
         if response.usage_metadata:
@@ -88,8 +91,8 @@ class UnifiedLLMClient:
         return response.text, input_tokens, output_tokens
 
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=2, max=8),
+        stop=stop_after_attempt(2),           # was 3 — fail faster
+        wait=wait_exponential(multiplier=1, min=1, max=4),  # was min=2, max=8
         retry=retry_if_exception_type(Exception),
         reraise=True
     )
@@ -98,7 +101,6 @@ class UnifiedLLMClient:
         if not self.groq_client:
             raise ValueError("Groq API key is not configured or client failed to initialize.")
         
-        # Supplement prompt with clear schema formatting guidelines to ensure compliant output
         system_instructions = (
             "You are a precise JSON generator. Your task is to populate the fields of the following JSON schema with actual data, findings, and content based on the user prompt.\n"
             "CRITICAL RULES:\n"
@@ -116,7 +118,8 @@ class UnifiedLLMClient:
                 {"role": "user", "content": prompt}
             ],
             response_format={"type": "json_object"},
-            temperature=0.2
+            temperature=0.2,
+            timeout=30  # Hard timeout per call in seconds
         )
         
         input_tokens = 0
@@ -130,10 +133,10 @@ class UnifiedLLMClient:
     def generate_structured_output(self, prompt: str, schema: Type[T], max_retries: int = 2) -> T:
         """
         Generates structured JSON output conforming to a Pydantic schema.
-        Handles provider failures, rate limits, and automatically falls back to an alternative provider if available.
-        Includes a self-healing parser loop for model schema errors.
+        Handles provider failures, rate limits, and automatically falls back
+        to an alternative provider if available. Includes a self-healing parser
+        loop for model schema errors.
         """
-        # Determine starting provider and fallback provider
         current_provider = self.provider
         fallback_provider = "groq" if current_provider == "gemini" else "gemini"
         
@@ -146,18 +149,16 @@ class UnifiedLLMClient:
             self.logger.log_info(f"Invoking LLM structured generator (Provider: {current_provider.upper()}, Model: {model})")
             
             try:
-                # Call primary provider
                 if current_provider == "gemini":
                     raw_text, in_t, out_t = self._call_gemini_structured(model, prompt, schema)
-                    cost = (in_t * 0.075 / 1_000_000) + (out_t * 0.30 / 1_000_000) # Est. Gemini 2.5 Flash
+                    cost = (in_t * 0.075 / 1_000_000) + (out_t * 0.30 / 1_000_000)
                 else:
                     raw_text, in_t, out_t = self._call_groq_structured(model, prompt, schema)
-                    cost = (in_t * 0.59 / 1_000_000) + (out_t * 0.79 / 1_000_000) # Est. Llama 3.3 70B
+                    cost = (in_t * 0.59 / 1_000_000) + (out_t * 0.79 / 1_000_000)
                 
                 self.logger.add_tokens(in_t, out_t, cost)
                 
-                # Verify and parse JSON
-                # Sometimes models wrap JSON in markdown blocks
+                # Strip markdown code fences if model wraps output
                 cleaned_text = raw_text.strip()
                 if cleaned_text.startswith("```json"):
                     cleaned_text = cleaned_text[7:]
@@ -169,8 +170,8 @@ class UnifiedLLMClient:
                     parsed_obj = schema.model_validate_json(cleaned_text)
                     return parsed_obj
                 except ValidationError as ve:
-                    # Self-healing loop: feed error back to same model to correct it
-                    self.logger.log_warning(f"JSON validation failed. Attempting self-healing correction loop. Error: {ve}")
+                    # Self-healing loop: feed error back to model to correct
+                    self.logger.log_warning(f"JSON validation failed. Attempting self-healing correction. Error: {ve}")
                     correction_prompt = (
                         f"Your previous JSON response failed validation.\n"
                         f"Error: {ve}\n"
@@ -196,7 +197,6 @@ class UnifiedLLMClient:
                 last_error = api_err
                 self.logger.log_warning(f"LLM call failed on {current_provider.upper()} provider. Error detail: {api_err}")
                 
-                # Check if fallback is available
                 has_fallback = (
                     (fallback_provider == "groq" and self.groq_key is not None) or
                     (fallback_provider == "gemini" and self.gemini_key is not None)
@@ -206,7 +206,7 @@ class UnifiedLLMClient:
                     self.logger.log_info(f"[FALLBACK TRIGGERED] Gracefully falling back to {fallback_provider.upper()} due to primary provider failure.")
                     current_provider = fallback_provider
                     model = settings.DEFAULT_GEMINI_MODEL if current_provider == "gemini" else settings.DEFAULT_GROQ_MODEL
-                    fallback_provider = "none" # Prevent infinite looping between providers
+                    fallback_provider = "none"
                     attempt += 1
                     continue
                 else:

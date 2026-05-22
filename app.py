@@ -398,27 +398,64 @@ provider = st.sidebar.selectbox(
     help="Select the principal LLM orchestration engine."
 )
 
+# Active provider badge
+gemini_configured = bool(settings.GEMINI_API_KEY)
+groq_configured = bool(settings.GROQ_API_KEY)
+primary_ok = (provider == "groq" and groq_configured) or (provider == "gemini" and gemini_configured)
+badge_color = "#10B981" if primary_ok else "#F59E0B"
+badge_label = f"{provider.upper()} ● ACTIVE" if primary_ok else f"{provider.upper()} ● KEY MISSING"
+st.sidebar.markdown(
+    f"<div style='background:rgba(16,185,129,0.1);border:1px solid {badge_color};border-radius:8px;"
+    f"padding:8px 12px;font-family:JetBrains Mono,monospace;font-size:0.8rem;color:{badge_color};"
+    f"font-weight:700;margin-bottom:8px;'>{badge_label}</div>",
+    unsafe_allow_html=True
+)
+
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔑 API Keys Override")
-st.sidebar.markdown("<small>Optional: Override values from `.env` file for this active session.</small>", unsafe_allow_html=True)
+st.sidebar.markdown(
+    "<small>Optional: Provide a key here to override the <code>.env</code> file <strong>for this session only</strong>. "
+    "Keys entered here are <em>never stored</em> and are cleared when the tab is closed.</small>",
+    unsafe_allow_html=True
+)
 
-gemini_key = st.sidebar.text_input("Google AI Studio Key", type="password", value=os.getenv("GEMINI_API_KEY", ""))
-groq_key = st.sidebar.text_input("Groq Console Key", type="password", value=os.getenv("GROQ_API_KEY", ""))
+# ⚠️ SECURITY: Do NOT pass value=os.getenv(...) here.
+# Doing so would echo the secret key back into the rendered HTML,
+# making it readable to anyone with browser dev-tools access.
+# Keys from .env are loaded directly into `settings` by pydantic-settings — no UI echo needed.
+gemini_key_override = st.sidebar.text_input(
+    "Google AI Studio Key",
+    type="password",
+    placeholder="Leave blank to use .env value"
+)
+groq_key_override = st.sidebar.text_input(
+    "Groq Console Key",
+    type="password",
+    placeholder="Leave blank to use .env value"
+)
 
-# Update global settings in-memory
-if gemini_key:
-    settings.GEMINI_API_KEY = gemini_key
-if groq_key:
-    settings.GROQ_API_KEY = groq_key
+# Only override in-memory settings if user actively typed a new key this session
+if gemini_key_override:
+    settings.GEMINI_API_KEY = gemini_key_override
+if groq_key_override:
+    settings.GROQ_API_KEY = groq_key_override
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ⚙️ Agent Hyperparameters")
-max_steps = st.sidebar.slider("Max Search/Scrape Steps", min_value=2, max_value=8, value=settings.MAX_STEPS)
+max_steps = st.sidebar.slider("Max Search/Scrape Steps", min_value=2, max_value=6, value=settings.MAX_STEPS)
 search_limit = st.sidebar.slider("Max Results Per Search", min_value=2, max_value=8, value=settings.SEARCH_LIMIT)
 
 # Update config limits in-memory
 settings.MAX_STEPS = max_steps
 settings.SEARCH_LIMIT = search_limit
+
+# Performance note
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    "<small>⚡ <strong>Tip:</strong> Groq (Llama 3.3-70b) is fastest. "
+    "Most queries complete in <strong>30–45 seconds</strong>.</small>",
+    unsafe_allow_html=True
+)
 
 # ---------------------------------------------------------
 # Session State Init
