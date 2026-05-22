@@ -28,3 +28,6 @@ Thumbs.db
 # Local cache layers
 scrape_cache.json
 search_cache.json
+
+# Personal preparation notes (local only, never commit)
+VIVA_PREPARATION.md
